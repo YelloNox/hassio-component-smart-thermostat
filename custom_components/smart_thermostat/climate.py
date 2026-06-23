@@ -862,7 +862,7 @@ class SmartThermostat(ClimateEntity, RestoreEntity, Thermostat):
         elif preset_mode == PRESET_HOME:
             self._attr_preset_mode = PRESET_HOME
             self._saved_target_temp = self._target_temp
-            self._target_temp = self._away_temp
+            self._target_temp = self._home_temp
             await self._async_control(force=True, reason=reason)
         elif preset_mode == PRESET_NONE:
             self._attr_preset_mode = PRESET_NONE
