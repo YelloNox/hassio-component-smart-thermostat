@@ -17,6 +17,7 @@ from homeassistant.components.climate.const import (
     HVACAction,
     HVACMode,
     PRESET_AWAY,
+    PRESET_HOME,
     PRESET_NONE,
     ClimateEntityFeature,
 )
@@ -447,7 +448,7 @@ class SmartThermostat(ClimateEntity, RestoreEntity, Thermostat):
         self._remove_stale_tracking = None
         if away_temp:
             self._support_flags = SUPPORT_FLAGS | ClimateEntityFeature.PRESET_MODE
-            self._attr_preset_modes = [PRESET_NONE, PRESET_AWAY]
+            self._attr_preset_modes = [PRESET_NONE, PRESET_AWAY, PRESET_HOME]
         else:
             self._attr_preset_modes = [PRESET_NONE]
         self._away_temp = away_temp
@@ -852,6 +853,11 @@ class SmartThermostat(ClimateEntity, RestoreEntity, Thermostat):
         reason = "preset_changed"
         if preset_mode == PRESET_AWAY:
             self._attr_preset_mode = PRESET_AWAY
+            self._saved_target_temp = self._target_temp
+            self._target_temp = self._away_temp
+            await self._async_control(force=True, reason=reason)
+        elif preset_mode == PRESET_HOME:
+            self._attr_preset_mode = PRESET_HOME
             self._saved_target_temp = self._target_temp
             self._target_temp = self._away_temp
             await self._async_control(force=True, reason=reason)
